@@ -2,12 +2,20 @@ from scrapy.exceptions import DropItem
 
 
 def clean_mileage(value):
-    if not value:
-        return None
+    if value is None:
+        return 0
 
-    value = value.replace(",", "").strip()
+    if isinstance(value, int):
+        return value
 
-    return int(value)
+    if isinstance(value, str):
+        value = value.replace(",", "").replace(" miles", "").strip()
+        try:
+            return int(value)
+        except ValueError:
+            return 0
+
+    return 0
 
 
 def normalize_fuel(value):
