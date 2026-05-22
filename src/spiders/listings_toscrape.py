@@ -1,6 +1,7 @@
 import scrapy
 import re
 import json
+from src.items import CarItem
 
 
 class BmwApiSpider(scrapy.Spider):
@@ -176,24 +177,23 @@ class BmwApiSpider(scrapy.Spider):
                 exterior_list = features.get("exterior", {}).get("standard")
                 exterior = exterior_list[0]
 
-                item = {
-                    "Model": str(car.get("title")),
-                    "Name": str(spec.get("derivative")),
-                    "mileage": car.get("condition_and_state", {}).get("mileage", 0),
-                    "registered": str(reg_iso),
-                    "engine": engine_str,
-                    "range": str(
-                        car.get("consumption", {})
-                        .get("range", {})
-                        .get("values", {})
-                        .get("total")
-                    ),
-                    "exterior": str(exterior),
-                    "fuel": str(spec.get("raw_fuel_type")),
-                    "transmission": str(spec.get("transmission")),
-                    "registration": reg_number,
-                    "upholstery": upholstery,
-                }
+                item = CarItem()
+                item["Model"] = str(car.get("title"))
+                item["Name"] = str(spec.get("derivative"))
+                item["mileage"] = car.get("condition_and_state", {}).get("mileage", 0)
+                item["registered"] = str(reg_iso)
+                item["engine"] = engine_str
+                item["range"] = str(
+                    car.get("consumption", {})
+                    .get("range", {})
+                    .get("values", {})
+                    .get("total")
+                )
+                item["exterior"] = str(exterior)
+                item["fuel"] = str(spec.get("raw_fuel_type"))
+                item["transmission"] = str(spec.get("transmission"))
+                item["registration"] = reg_number
+                item["upholstery"] = upholstery
                 yield item
 
             except Exception as e:
